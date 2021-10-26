@@ -12,10 +12,7 @@
 
 import numpy as np
 import pandas as pd
-
-# filename = "input_simple.txt"
-filename = "pandas_loading_benchmarks_data.txt"
-# filename = "confus.txt"
+import time
 
 ### PYTHON ###
 def load_pandas(filename):
@@ -32,7 +29,6 @@ import julia
 from julia.api import Julia
 jl = Julia(runtime="julia-1.6.3")
 from julia import Main
-Main.filename = filename
 jl.eval('include("jl_reader.jl")')
 jl.eval('include("jl_reader_pure.jl")')
 def load_jl(jl_index):
@@ -50,22 +46,51 @@ def load_cpp(filename):
                                    "value": cpp_index[2]}, index=["key", "list_index"])
     return df
 
-#%%
+#%% Warmup
+filename = "gen-data/confus-001-0.txt"
+Main.filename = filename
 df_python = load_pandas(filename)
-df_julia = load_jl(jl.eval(f'load_confusjl(filename)'))
-df_julia2 = load_jl(jl.eval(f'load_confus_purejl(filename)'))
+df_julia_and_c = load_jl(jl.eval(f'load_confusjl(filename)'))
+df_julia = load_jl(jl.eval(f'load_confus_purejl(filename)'))
 df_cpp = load_cpp(filename)
 
-df_python.shape,
-df_julia.shape, df_cpp.shape
 #%%
+python_time = []
+cpp_time = []
+julia_and_c_time = []
+julia_time = []
+rows = []
+elements = []
 
-df_python.eq(df_julia).all().all(), df_python.eq(df_cpp).all().all()
-#%%
-%timeit load_pandas(filename)
-#%%
-%timeit load_cpp(filename)
+N = 50
+for i in range(1, N + 1):
+    for j in range(0, 10):
+        filename = 'gen-data/confus-{:03d}-{}.txt'.format(i, j)
+        Main.filename = filename
+        start = time.time()
+        df_python = load_pandas(filename)
+        python_time.append(time.time() - start)
+        start = time.time()
+        df_cpp = load_cpp(filename)
+        cpp_time.append(time.time() - start)
+        start = time.time()
+        df_julia_and_c = load_jl(jl.eval(f'load_confusjl(filename)'))
+        julia_and_c_time.append(time.time() - start)
+        start = time.time()
+        df_julia = load_jl(jl.eval(f'load_confus_purejl(filename)'))
+        julia_time.append(time.time() - start)
+        rows.append(5 * i)
+        elements.append(df_julia.shape[0])
+        perc = round(100 * (i * 10 + j) / ((N + 1) * 10 - 1), 1)
+        print(f'perc = {perc}%')
+
+df = pd.DataFrame({
+    'rows': rows,
+    'elements': elements,
+    'python_time': python_time,
+    'cpp_time': cpp_time,
+    'julia_and_c_time': julia_and_c_time,
+    'julia_time': julia_time,
+})
+df.to_csv('scalability_test.csv')
 # %%
-%timeit load_jl(jl.eval('load_confusjl(filename)'))
-# %%
-%timeit load_jl(jl.eval('load_confus_purejl(filename)'))
