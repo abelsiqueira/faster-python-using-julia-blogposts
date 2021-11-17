@@ -3,6 +3,7 @@ function gen_confus(;
   n_rows = 50,
   col_max = 5000,
 )
+  # TODO: Avoid repeated keys
   keys = sort(rand(100_000:999_999, n_rows))
   open(filename, "w") do io
     for i = 1:n_rows

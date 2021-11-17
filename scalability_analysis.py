@@ -1,50 +1,169 @@
-#%%
+# %%
+from sklearn.linear_model import LinearRegression
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.colors as mc
+import colorsys
 
-df = pd.read_csv('scalability_test.csv')
-plt.figure(figsize=(10,6))
-gen_args = {'alpha': 0.3, 's': 20}
+def adjust_lightness(color, amount=1.4):
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
+
+white_colors = {
+    "figure.facecolor" : (1, 1, 1, 0),
+    "savefig.facecolor" : (1, 1, 1, 0),
+    "ytick.color" : "w",
+    "xtick.color" : "w",
+    "axes.labelcolor" : "w",
+    "axes.edgecolor" : "w"
+}
+plt.rcParams.update(white_colors)
+
+gen_args = {'alpha': 0.2, 's': 20}
 spc_args = {
     'python': {
-        'label': 'Python',
-        'color': '#1f77b4',
+        'label': 'Pure Python',
+        'color': '#333333',
     },
     'cpp': {
-        'label': 'Python + CPP',
-        'color': '#ff7f0e',
+        'label': 'Python + C++',
+        'color': '#1f77b4',
     },
-    'julia_and_c': {
-        'label': 'Julia + C',
+    'julia_c': {
+        'label': 'Julia + C parsing',
         'color': '#2ca02c',
     },
-    'julia': {
-        'label': 'Julia',
+    'julia_dict': {
+        'label': 'Python + Basic Julia',
         'color': '#9467bd',
+    },
+    'julia_manual': {
+        'label': 'Python + Optimized Julia',
+        'color': '#d62728',
     }
 }
-all_rows = df['rows'].unique()
-for (key, value) in spc_args.items():
-    plt.scatter(df['rows'], df[f'{key}_time'], color=value['color'], **gen_args)
-    mean = [df[df['rows'] == r][f'{key}_time'].mean() for r in all_rows]
-    plt.plot(all_rows, mean, **value, marker='x', markersize=10)
 
-plt.xscale('log')
-plt.yscale('log')
-plt.xlabel('Number of rows')
-plt.ylabel('Time (s)')
-plt.legend()
-plt.savefig('scalability_time_per_row.png')
-# %%
-plt.figure(figsize=(10,6))
-for (key, value) in spc_args.items():
-    plt.scatter(df['elements'], df[f'{key}_time'], color=value['color'], **gen_args)
+def plots(
+        subset=spc_args.keys(),
+        suffix='all',
+        add_y_limits=False,
+    ):
+
+    all_rows = df['rows'].unique()
+    plt.figure(figsize=(10, 6))
+    for (key, value) in spc_args.items():
+        if key not in subset:
+            continue
+        plt.scatter(df['rows'], df[f'{key}_time'], color=value['color'], **gen_args)
+        mean = [df[df['rows'] == r][f'{key}_time'].mean() for r in all_rows]
+        plt.plot(all_rows, mean, **value, marker='x', markersize=10)
+
+    plt.xlabel('Number of rows')
+    plt.ylabel('Time (s)')
+    plt.legend()
+    plt.savefig(f'plots/scalability_time_per_row_{suffix}.png')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.savefig(f'plots/scalability_time_per_row_{suffix}_loglog.png')
+
+    df_select = df[df['elements'] > 100000]
+    plt.rcParams.update(white_colors)
+    plt.figure(figsize=(10, 6))
+    for (key, value) in spc_args.items():
+        if key not in subset:
+            continue
+        # clf = LinearRegression()
+        # clf.fit(np.log(df_select[['elements']]), np.log(df_select[f'{key}_time']))
+        # ypred = np.exp(clf.predict(np.log(df_select[['elements']])))
+        lbl = value['label']
+
+        plt.scatter(df['elements'], df[f'{key}_time'], color=value['color'], **gen_args)
+        plt.plot(df['elements'], df[f'{key}_time'], label=lbl, color=value['color'])
+        # plt.plot(df_select['elements'], ypred, color=adjust_lightness(value['color']), linewidth=2)
+    plt.xlabel('Number of elements')
+    plt.ylabel('Time (s)')
+    if add_y_limits:
+        plt.ylim(bottom=3e-5, top=20)
+    plt.legend()
+    plt.savefig(f'plots/scalability_time_per_element_{suffix}.png')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.savefig(f'plots/scalability_time_per_element_{suffix}_loglog.png')
+
+#%%
+df = pd.read_csv('scalability_test.csv')
+df.sort_values('elements', inplace=True)
+
+plots(subset=['python', 'cpp'], suffix='original')
+plots(subset=['python', 'cpp', 'julia_dict'], suffix='julia_dict_w_python')
+# plots(subset=['cpp', 'julia_dict'], suffix='julia_dict')
+plots(subset=['cpp', 'julia_dict', 'julia_manual'], suffix='julia_manual')
+# plots(subset=['cpp', 'julia_dict', 'julia_c', 'julia_manual'], suffix='all_julia')
+
+#%%
+df = pd.read_csv('parts_test.csv')
+df.sort_values('elements', inplace=True)
+
+plt.figure(figsize=(10, 6))
+plt.scatter(df['elements'], df['load_external'], color='black', **gen_args)
+plt.plot(df['elements'], df['load_external'], label="Python DataFrame call", color='black')
+
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel('Number of elements')
 plt.ylabel('Time (s)')
 plt.legend()
-plt.savefig('scalability_time_per_element.png')
+plt.savefig(f'plots/parts_time_per_element_python.png')
+
+plt.figure(figsize=(10, 6))
+for (key, value) in spc_args.items():
+    if key not in ['cpp', 'julia_dict', 'julia_manual']:
+        continue
+    dfkey = f'read_arrays_{key}_time'
+    # if dfkey not in df.columns:
+    #     continue
+    plt.scatter(
+        df['elements'],
+        df[dfkey],
+        color=value['color'],
+        **gen_args
+    )
+    plt.plot(
+        df['elements'],
+        df[dfkey],
+        label='Read array in ' + value['label'],
+        color=value['color']
+    )
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('Number of elements')
+plt.ylabel('Time (s)')
+plt.legend()
+plt.savefig(f'plots/parts_time_per_element.png')
+# %%
+for (key, value) in spc_args.items():
+    dfkey = f'read_arrays_{key}_time'
+    if dfkey not in df.columns:
+        continue
+    total_time = df['load_external'] + df[dfkey]
+    plt.figure(figsize=(10, 6))
+    plt.stackplot(
+        df['elements'],
+        df['load_external'] / total_time,
+        df[dfkey] / total_time,
+        labels=['load and convert to DF', 'Read array in ' + value['label']],
+        colors=['gray', value['color']],
+    )
+    plt.xscale('log')
+    plt.xlabel('Number of elements')
+    plt.ylabel('Relative Time')
+    plt.legend()
+    plt.savefig(f'plots/parts_time_per_element_{key}.png')
+    break
 # %%
