@@ -1,5 +1,7 @@
 # Calling Julia from Python - an experiment on data loading
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5708268.svg)](https://doi.org/10.5281/zenodo.5708268)
+
 See the [slides](slides).
 
 ## TLDR
