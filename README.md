@@ -32,7 +32,7 @@ A basic version is already an improvement over the pure Python version, and an o
 - Run `path/to/python` and enter
   - `import julia`
   - `julia.install("julia=path/to/julia")`
-- Download dataset and store in `gen-data` folder: [dataset]
+- Download dataset and store in `gen-data` folder: [![Zenodo badge][dataset-badge]][dataset]
 - Run `scalability_test.py` - it should take several hours (over 10) and consume a moderate amount of memory.
 - Run `scalability_analysis.py`.
 
@@ -40,3 +40,4 @@ A basic version is already an improvement over the pure Python version, and an o
 [Jill]: https://github.com/abelsiqueira/jill
 [pyjulia-trouble]: https://pyjulia.readthedocs.io/en/latest/troubleshooting.html
 [dataset]: https://doi.org/10.5281/zenodo.5707672
+[dataset-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.5707672.svg
