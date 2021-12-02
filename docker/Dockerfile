@@ -63,7 +63,8 @@ COPY docker/docker_test.py jl_* /app/
 RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
 # CMD ["python", "/app/scalability_test.py"]
-CMD ["python", "/app/docker_test.py"]
+ENTRYPOINT ["python", "/app/docker_test.py"]
+CMD ["5"]
 
 
 # docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0

@@ -14,8 +14,14 @@
 # - Run `python`, `import julia`, then `julia.install("julia=julia-1.6.3")` or whatever it's called.
 #   - The argument of `install` can be ignored it `julia` is your binary.
 
+import argparse
 import pandas as pd
 import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument('num_files', metavar='N', type=int, help='Read up to file gen-data/confus-N-*')
+
+args = parser.parse_args()
 
 ### PYTHON ###
 def load_pandas(filename):
@@ -85,7 +91,7 @@ cpp_time = []
 rows = []
 elements = []
 
-N = 5
+N = args.num_files
 T = 1
 for i in range(1, N + 1):
     for j in range(0, 10):
