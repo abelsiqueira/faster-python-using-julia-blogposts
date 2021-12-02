@@ -14,7 +14,6 @@
 # - Run `python`, `import julia`, then `julia.install("julia=julia-1.6.3")` or whatever it's called.
 #   - The argument of `install` can be ignored it `julia` is your binary.
 
-import numpy as np
 import pandas as pd
 import time
 

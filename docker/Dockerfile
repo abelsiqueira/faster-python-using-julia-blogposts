@@ -15,43 +15,55 @@ RUN rm -f /etc/localtime && \
 RUN pacman -Syyuu --noconfirm && \
     pacman -S --noconfirm --needed \
     binutils gcc fakeroot make base-devel \
-    wget git
+    wget git cmake pybind11
 
 # INSTALL PYTHON
 #===========================================
 RUN pacman -S --noconfirm \
     python python-pip
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh -O miniconda.sh
-RUN bash miniconda.sh -b -p /app/miniconda3
-ENV PATH /app/miniconda3/bin:$PATH
-RUN conda init
-RUN conda install xtensor-python -c conda-forge
+ENV PYTHON /usr/bin/python
 
 # INSTALL JULIA
-RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh
-RUN bash /app/jill.sh -y -v 1.6.4
-ENV PYTHON /usr/bin/python
-RUN julia -e 'using Pkg; Pkg.add("PyCall"); Pkg.add("Parsers")'
+RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
+    bash /app/jill.sh -y -v 1.6.4 && \
+    julia -e 'using Pkg; Pkg.add("PyCall"); Pkg.add("Parsers")'
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install julia numpy pandas
+    python -m pip install julia numpy pandas && \
+    python -c 'import julia; julia.install()'
 
-RUN python -c 'import julia; julia.install()'
+# INSTALL C++ (and packages)
+RUN wget https://github.com/xtensor-stack/xtl/archive/refs/tags/0.7.4.tar.gz -O xtl.tar.gz && \
+    tar -zxf xtl.tar.gz && \
+    cd /app/xtl-0.7.4 && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr && \
+    make install
+
+RUN wget https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.24.0.tar.gz -O xtensor.tar.gz && \
+    tar -zxf xtensor.tar.gz && \
+    cd /app/xtensor-0.24.0 && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr && \
+    make install
+
+RUN wget https://github.com/xtensor-stack/xtensor-python/archive/refs/tags/0.26.0.tar.gz -O xtensor-python.tar.gz && \
+    tar -zxf xtensor-python.tar.gz && \
+    cd /app/xtensor-python-0.26.0 && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr && \
+    make install
+
+RUN git clone https://github.com/TICCLAT/ticcl-output-reader && \
+    python -m pip install ./ticcl-output-reader
 
 # COPY files /app/...
 COPY docker/docker_test.py jl_* /app/
 
-# INSTALL C++ (and packages)
-RUN git clone https://github.com/TICCLAT/ticcl-output-reader
-RUN python -m pip install ./ticcl-output-reader
-
-
 # CLEAN UP
 #===========================================
 
-RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz miniconda.sh
+RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
 # CMD ["python", "/app/scalability_test.py"]
 CMD ["python", "/app/docker_test.py"]
+
 
 # docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0
