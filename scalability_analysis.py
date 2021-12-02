@@ -165,5 +165,4 @@ for (key, value) in spc_args.items():
     plt.ylabel('Relative Time')
     plt.legend()
     plt.savefig(f'plots/parts_time_per_element_{key}.png')
-    break
 # %%

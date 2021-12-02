@@ -10,7 +10,7 @@ function read_arrays_jl_manual(filename)
   indexes = zeros(Int, n)
   values = zeros(Int, n)
 
-  count, k, j, fi, fj, fn = -1, 0, 1, 2, length(file)
+  count, k, j, fi, fj, fn = 1, -1, 0, 1, 2, length(file)
 
   while fi < fn && count ≤ n
     while (file[fj] ≥ 0x30) fj += 1 end
