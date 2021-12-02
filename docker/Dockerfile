@@ -29,7 +29,7 @@ RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
     julia -e 'using Pkg; Pkg.add("PyCall"); Pkg.add("Parsers")'
 
 RUN python -m pip install --upgrade pip && \
-    python -m pip install julia numpy pandas && \
+    python -m pip install julia matplotlib numpy pandas && \
     python -c 'import julia; julia.install()'
 
 # INSTALL C++ (and packages)
@@ -54,8 +54,7 @@ RUN wget https://github.com/xtensor-stack/xtensor-python/archive/refs/tags/0.26.
 RUN git clone https://github.com/TICCLAT/ticcl-output-reader && \
     python -m pip install ./ticcl-output-reader
 
-# COPY files /app/...
-COPY docker/docker_test.py jl_* /app/
+COPY docker/docker_test.py docker/docker_analysis.py jl_* /app/
 
 # CLEAN UP
 #===========================================
@@ -63,7 +62,7 @@ COPY docker/docker_test.py jl_* /app/
 RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
 # CMD ["python", "/app/scalability_test.py"]
-ENTRYPOINT ["python", "/app/docker_test.py"]
+ENTRYPOINT ["python", "-u", "/app/docker_test.py"]
 CMD ["5"]
 
 

@@ -1,19 +1,3 @@
-#%%
-# Preparing the C++ part:
-# - Read https://blog.esciencecenter.nl/irregular-data-in-pandas-using-c-88ce311cb9ef
-# - Just download the existing ticcl_output_reader
-#
-# Preparing the Julia part:
-# - You need Python with a shared library! (Arch Linux /usr/bin/python)
-# - Tested on Julia 1.6.3
-# - Open Julia, enter the following commands:
-#   - julia> using Pkg
-#   - ENV["PYTHON"] = "/path/to/python"
-#   - Pkg.add("PyCall")
-# - Install pyjulia with `python -m pip install julia`
-# - Run `python`, `import julia`, then `julia.install("julia=julia-1.6.3")` or whatever it's called.
-#   - The argument of `install` can be ignored it `julia` is your binary.
-
 import argparse
 import pandas as pd
 import time
@@ -112,7 +96,7 @@ for i in range(1, N + 1):
         rows.append(5 * i)
         elements.append(df.shape[0])
         perc = round(100 * (i - 1 + j / 10) / N, 1)
-        print(f'perc = {perc}%, file {filename}')
+        print(f'progress = {perc}%, file {filename}')
 
 df = pd.DataFrame({
     'rows': rows,
@@ -124,3 +108,5 @@ df = pd.DataFrame({
     'julia_manual_time': julia_manual_time,
 })
 df.to_csv('out/docker_test.csv')
+
+import docker_analysis
