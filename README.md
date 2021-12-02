@@ -15,6 +15,28 @@ A basic version is already an improvement over the pure Python version, and an o
 
 ## Reproduction
 
+### Using docker
+
+- Download dataset and store in a folder called `gen-data`: [![Zenodo badge][dataset-badge]][dataset]
+
+- Build the image with
+
+  ```
+  docker build -t jl-from-py:0.1.0 -f docker/Dockerfile .
+  ```
+
+- Run it with
+
+  ```
+  docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" jl-from-py:0.1.0
+  ```
+
+  Optionally you can add an integer argument to define up to which set of problems to run (`gen-data/confus-N-*`). There are 10 problems per set.
+
+- You will find the output in the `out/` folder.
+
+### Manually
+
 - Follow [Patrick's blog post][patrick] to install the C++ part.
 - Install Julia (We've used Julia 1.6.3)
   - I recommend using [Jill]
