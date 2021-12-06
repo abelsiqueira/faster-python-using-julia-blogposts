@@ -54,16 +54,15 @@ RUN wget https://github.com/xtensor-stack/xtensor-python/archive/refs/tags/0.26.
 RUN git clone https://github.com/TICCLAT/ticcl-output-reader && \
     python -m pip install ./ticcl-output-reader
 
-COPY docker/docker_test.py docker/docker_analysis.py jl_* /app/
+COPY scalability_test.py scalability_analysis.py jl_* /app/
 
 # CLEAN UP
 #===========================================
 
 RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
-# CMD ["python", "/app/scalability_test.py"]
-ENTRYPOINT ["python", "-u", "/app/docker_test.py"]
-CMD ["5"]
+ENTRYPOINT ["python", "-u", "/app/scalability_test.py"]
+CMD ["2"]
 
 
 # docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0

@@ -1,11 +1,11 @@
 # %%
-from sklearn.linear_model import LinearRegression
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.colors as mc
 import colorsys
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.colors as mc
+from pathlib import Path
+
+Path("out/plots").mkdir(parents=True, exist_ok=True)
 
 def adjust_lightness(color, amount=1.4):
     try:
@@ -67,47 +67,40 @@ def plots(
     plt.xlabel('Number of rows')
     plt.ylabel('Time (s)')
     plt.legend()
-    plt.savefig(f'plots/scalability_time_per_row_{suffix}.png')
+    plt.savefig(f'out/plots/scalability_time_per_row_{suffix}.png')
     plt.xscale('log')
     plt.yscale('log')
-    plt.savefig(f'plots/scalability_time_per_row_{suffix}_loglog.png')
+    plt.savefig(f'out/plots/scalability_time_per_row_{suffix}_loglog.png')
 
-    df_select = df[df['elements'] > 100000]
     plt.rcParams.update(white_colors)
     plt.figure(figsize=(10, 6))
     for (key, value) in spc_args.items():
         if key not in subset:
             continue
-        # clf = LinearRegression()
-        # clf.fit(np.log(df_select[['elements']]), np.log(df_select[f'{key}_time']))
-        # ypred = np.exp(clf.predict(np.log(df_select[['elements']])))
         lbl = value['label']
 
         plt.scatter(df['elements'], df[f'{key}_time'], color=value['color'], **gen_args)
         plt.plot(df['elements'], df[f'{key}_time'], label=lbl, color=value['color'])
-        # plt.plot(df_select['elements'], ypred, color=adjust_lightness(value['color']), linewidth=2)
     plt.xlabel('Number of elements')
     plt.ylabel('Time (s)')
     if add_y_limits:
         plt.ylim(bottom=3e-5, top=20)
     plt.legend()
-    plt.savefig(f'plots/scalability_time_per_element_{suffix}.png')
+    plt.savefig(f'out/plots/scalability_time_per_element_{suffix}.png')
     plt.xscale('log')
     plt.yscale('log')
-    plt.savefig(f'plots/scalability_time_per_element_{suffix}_loglog.png')
+    plt.savefig(f'out/plots/scalability_time_per_element_{suffix}_loglog.png')
 
 #%%
-df = pd.read_csv('scalability_test.csv')
+df = pd.read_csv('out/scalability_test.csv')
 df.sort_values('elements', inplace=True)
 
 plots(subset=['python', 'cpp'], suffix='original')
 plots(subset=['python', 'cpp', 'julia_dict'], suffix='julia_dict_w_python')
-# plots(subset=['cpp', 'julia_dict'], suffix='julia_dict')
 plots(subset=['cpp', 'julia_dict', 'julia_manual'], suffix='julia_manual')
-# plots(subset=['cpp', 'julia_dict', 'julia_c', 'julia_manual'], suffix='all_julia')
 
 #%%
-df = pd.read_csv('parts_test.csv')
+df = pd.read_csv('out/parts_test.csv')
 df.sort_values('elements', inplace=True)
 
 plt.figure(figsize=(10, 6))
@@ -119,7 +112,7 @@ plt.yscale('log')
 plt.xlabel('Number of elements')
 plt.ylabel('Time (s)')
 plt.legend()
-plt.savefig(f'plots/parts_time_per_element_python.png')
+plt.savefig(f'out/plots/parts_time_per_element_python.png')
 
 plt.figure(figsize=(10, 6))
 for (key, value) in spc_args.items():
@@ -145,7 +138,7 @@ plt.yscale('log')
 plt.xlabel('Number of elements')
 plt.ylabel('Time (s)')
 plt.legend()
-plt.savefig(f'plots/parts_time_per_element.png')
+plt.savefig(f'out/plots/parts_time_per_element.png')
 # %%
 for (key, value) in spc_args.items():
     dfkey = f'read_arrays_{key}_time'
@@ -164,5 +157,5 @@ for (key, value) in spc_args.items():
     plt.xlabel('Number of elements')
     plt.ylabel('Relative Time')
     plt.legend()
-    plt.savefig(f'plots/parts_time_per_element_{key}.png')
+    plt.savefig(f'out/plots/parts_time_per_element_{key}.png')
 # %%

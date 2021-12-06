@@ -1,22 +1,15 @@
-#%%
-# Preparing the C++ part:
-# - Read https://blog.esciencecenter.nl/irregular-data-in-pandas-using-c-88ce311cb9ef
-# - Just download the existing ticcl_output_reader
-#
-# Preparing the Julia part:
-# - You need Python with a shared library! (Arch Linux /usr/bin/python)
-# - Tested on Julia 1.6.3
-# - Open Julia, enter the following commands:
-#   - julia> using Pkg
-#   - ENV["PYTHON"] = "/path/to/python"
-#   - Pkg.add("PyCall")
-# - Install pyjulia with `python -m pip install julia`
-# - Run `python`, `import julia`, then `julia.install("julia=julia-1.6.3")` or whatever it's called.
-#   - The argument of `install` can be ignored it `julia` is your binary.
 
-import numpy as np
+import argparse
 import pandas as pd
+from pathlib import Path
 import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument('num_files', metavar='N', type=int, help='Read up to file gen-data/confus-N-*')
+
+args = parser.parse_args()
+
+Path("out").mkdir(exist_ok=True)
 
 ### PYTHON ###
 def load_pandas(filename):
@@ -39,7 +32,7 @@ def load_external(arrays):
 ### JULIA ###
 import julia
 from julia.api import Julia
-jl = Julia(runtime="julia-1.6.3")
+jl = Julia(runtime="julia-1.6.4")
 from julia import Main
 jl.eval('include("jl_reader_dict.jl")')
 def load_julia_dict(filename):
@@ -86,7 +79,7 @@ cpp_time = []
 rows = []
 elements = []
 
-N = 100
+N = args.num_files
 T = 5
 for i in range(1, N + 1):
     for j in range(0, 10):
@@ -106,7 +99,7 @@ for i in range(1, N + 1):
         rows.append(5 * i)
         elements.append(df.shape[0])
         perc = round(100 * (i - 1 + j / 10) / N, 1)
-        print(f'perc = {perc}%')
+        print(f'progress = {perc}%, file {filename}')
 
 df = pd.DataFrame({
     'rows': rows,
@@ -117,7 +110,7 @@ df = pd.DataFrame({
     'julia_dict_time': julia_dict_time,
     'julia_manual_time': julia_manual_time,
 })
-df.to_csv('scalability_test.csv')
+df.to_csv('out/scalability_test.csv')
 # %%
 load_external_time = []
 read_arrays_julia_c_time = []
@@ -128,8 +121,6 @@ read_arrays_cpp_time = []
 rows = []
 elements = []
 
-N = 100
-T = 5
 for i in range(1, N + 1):
     for j in range(0, 10):
         filename = "gen-data/confus-{:03d}-{:d}.txt".format(i, j)
@@ -158,7 +149,7 @@ for i in range(1, N + 1):
         rows.append(5 * i)
         elements.append(df.shape[0])
         perc = round(100 * (i - 1 + j / 10) / N, 1)
-        print(f'perc = {perc}%')
+        print(f'progress = {perc}%, file {filename}')
 
 df = pd.DataFrame({
     'rows': rows,
@@ -169,5 +160,6 @@ df = pd.DataFrame({
     'read_arrays_julia_dict_time': read_arrays_julia_dict_time,
     'read_arrays_julia_manual_time': read_arrays_julia_manual_time,
 })
-df.to_csv('parts_test.csv')
-# %%
+df.to_csv('out/parts_test.csv')
+#%%
+import scalability_analysis

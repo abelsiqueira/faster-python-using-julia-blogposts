@@ -22,7 +22,7 @@ A basic version is already an improvement over the pure Python version, and an o
 - Build the image with
 
   ```
-  docker build -t jl-from-py:0.1.0 -f docker/Dockerfile .
+  docker build -t jl-from-py:0.1.0 .
   ```
 
 - Run it with
