@@ -1,3 +1,4 @@
 gen-data
 out
-*.txt
+env
+ticcl-output-reader
