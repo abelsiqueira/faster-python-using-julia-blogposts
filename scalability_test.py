@@ -33,6 +33,8 @@ def load_external(arrays):
 import julia
 from julia.api import Julia
 jl = Julia(runtime="julia-1.6.4")
+jl.eval('using Pkg')
+jl.eval('Pkg.activate(".")')
 from julia import Main
 jl.eval('include("jl_reader_dict.jl")')
 def load_julia_dict(filename):
