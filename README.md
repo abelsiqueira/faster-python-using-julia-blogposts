@@ -15,53 +15,26 @@ A basic version is already an improvement over the pure Python version, and an o
 
 ## Reproduction
 
-### Using docker
-
 - Download dataset and store in a folder called `gen-data`: [![Zenodo badge][dataset-badge]][dataset]
 
-- Build the image with
+- Get the image with
 
   ```
-  docker build -t jl-from-py:0.1.0 .
+  docker pull abelsiqueira/jl-from-py:0.2.0
   ```
 
 - Run it with
 
   ```
-  docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" jl-from-py:0.1.0
+  docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" jl-from-py:0.2.0 --max-num-files 1000
   ```
-
-  Optionally you can add an integer argument to define up to which set of problems to run (`gen-data/confus-N-*`). There are 10 problems per set.
 
 - You will find the output in the `out/` folder.
 
-### Manually
-
-- Follow [Patrick's blog post][patrick] to install the C++ part.
-- Install Julia (We've used Julia 1.6.3)
-  - I recommend using [Jill]
-  - We'll refer to this Julia as `path/to/julia`.
-- Install Python
-  - Ideally, one dynamically linked to `libpython`.
-  - To test it, use `ldd path/to/python` and look for `libpython3.9`. It should exist for the shared version.
-  - If you don't have, look into workarounds [here][pyjulia-trouble]
-  - Tip: Archlinux's system Python is dynamically linked.
-  - We've used Python 3.9.7 from Archlinux.
-- Open Julia and enter the following commands:
-  - `ENV["PYTHON"] = "path/to/python"`
-  - `using Pkg`
-  - `Pkg.add("PyCall")`
-  - This will make sure that the packages we are installing use the correct Python version
-- Install `juliapy` with `path/to/python -m pip install julia`
-- Run `path/to/python` and enter
-  - `import julia`
-  - `julia.install("julia=path/to/julia")`
-- Download dataset and store in `gen-data` folder: [![Zenodo badge][dataset-badge]][dataset]
-- Run `scalability_test.py` - it should take several hours (over 10) and consume a moderate amount of memory.
-- Run `scalability_analysis.py`.
+The docker runs the script `src/main.py` that runs `run_experiments.py` and `run_analysis.py`.
+The `--max-num-files` can be used to limit the experiment. The files are traversed in name order.
+You can also use `--folder` to set a different folder than `gen-data`.
 
 [patrick]: https://blog.esciencecenter.nl/irregular-data-in-pandas-using-c-88ce311cb9ef
-[Jill]: https://github.com/abelsiqueira/jill
-[pyjulia-trouble]: https://pyjulia.readthedocs.io/en/latest/troubleshooting.html
 [dataset]: https://doi.org/10.5281/zenodo.5707672
 [dataset-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.5707672.svg
