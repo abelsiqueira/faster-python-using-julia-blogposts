@@ -21,7 +21,7 @@ plots_langs_per_element(
     suffix='julia_opt'
 )
 plots_langs_per_element(
-    df_load,
+    df_read,
     subset=['cpp', 'julia_basic', 'julia_opt'],
     suffix='read_only'
 )
