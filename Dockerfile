@@ -19,15 +19,15 @@ RUN apt-get update -y && apt-get upgrade -y && \
 
 # INSTALL PYTHON
 #===========================================
-COPY requirements.txt /app/
-ENV PATH "/app/env/bin:$PATH"
 RUN wget https://www.python.org/ftp/python/3.9.9/Python-3.9.9.tgz && \
     tar -zxf Python-3.9.9.tgz && \
     cd Python-3.9.9 && \
     ./configure --with-ensurepip=install --enable-shared && make && make install && \
     ldconfig && \
-    ln -sf python3 /usr/local/bin/python && \
-    python -m venv env && \
+    ln -sf python3 /usr/local/bin/python
+COPY requirements.txt /app/
+ENV PATH "/app/env/bin:$PATH"
+RUN python -m venv env && \
     python -m pip install -r requirements.txt
 
 # INSTALL C++ PACKAGES
@@ -58,6 +58,7 @@ RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f64380
 # INSTALL JULIA
 #====================================
 COPY Project.toml Manifest.toml *.jl *.py /app/
+COPY src/ /app/src/
 
 RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
     bash /app/jill.sh -y -v 1.6.4 && \
@@ -70,8 +71,8 @@ RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
 
 RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
-ENTRYPOINT ["python", "-u", "/app/scalability_test.py"]
-CMD ["2"]
+ENTRYPOINT ["python", "-u", "/app/src/main.py"]
+CMD ["--max-num-files", "2"]
 
 
 # docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0 2

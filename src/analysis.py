@@ -52,14 +52,14 @@ def read_experiments_data(filename='out/experiments.csv'):
         'elements': df['elements'],
         'python': df['pure_python'],
     })
-    df_load = pd.DataFrame({
+    df_read = pd.DataFrame({
         'elements': df['elements'],
     })
     for key in ['julia_c', 'julia_basic', 'julia_opt', 'cpp']:
-        df_load[key] = df[key]
+        df_read[key] = df[key]
         df_complete[key] = df[key] + df['load_external']
 
-    return df, df_load, df_complete
+    return df, df_read, df_complete
 
 def plots_langs_per_element(
         df,

@@ -1,6 +1,6 @@
 from analysis import *
 
-df, df_load, df_complete = read_experiments_data('out/experiments.csv')
+df, df_read, df_complete = read_experiments_data('out/experiments.csv')
 
 # These plots compare the language time over the number of elements.
 plots_langs_per_element(
@@ -23,7 +23,7 @@ plots_langs_per_element(
 plots_langs_per_element(
     df_load,
     subset=['cpp', 'julia_basic', 'julia_opt'],
-    suffix='load_only'
+    suffix='read_only'
 )
 
 # Just the load-into-dataframe time of python
