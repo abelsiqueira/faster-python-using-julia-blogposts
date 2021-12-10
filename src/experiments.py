@@ -57,7 +57,7 @@ def experiments(
         times['load_external'].append((time.time() - start) / tries)
 
         # Slow part
-        if tries > 1 and times['load_external'][-1] > 1.0:
+        if tries > 1 and times['load_external'][-1] > 0.1:
             tries = 1
 
         # Progress
