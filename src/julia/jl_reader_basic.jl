@@ -23,10 +23,3 @@ function read_arrays_jl_dict(filename)
 
   return keys, indexes, values
 end
-
-# filename = "confus.txt"
-# filename = "input_simple.txt"
-# filename = "pandas_loading_benchmarks_data.txt"
-# filename = "gen-data/confus-001-0.txt"
-# load_confus_dict(filename)
-# @time load_confus_dict(filename);

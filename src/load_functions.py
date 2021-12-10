@@ -8,8 +8,8 @@ jl.eval('using Pkg')
 jl.eval('Pkg.activate(".")')
 from julia import Main
 jl.eval('include("src/julia/jl_reader_c.jl")')
-jl.eval('include("src/julia/jl_reader_dict.jl")')
-jl.eval('include("src/julia/jl_reader_manual.jl")')
+jl.eval('include("src/julia/jl_reader_basic.jl")')
+jl.eval('include("src/julia/jl_reader_opt.jl")')
 
 def load_pandas(filename):
     df_tuples = pd.read_csv(filename,

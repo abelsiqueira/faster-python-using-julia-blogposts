@@ -32,9 +32,3 @@ function read_arrays_jl_manual(filename)
 
   return keys, indexes, values
 end
-
-# filename = "confus.txt"
-# filename = "input_simple.txt"
-# filename = "pandas_loading_benchmarks_data.txt"
-# load_confus_purejl(filename)
-# @time load_confus_purejl(filename);
