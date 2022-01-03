@@ -1,23 +1,28 @@
 using DelimitedFiles
 
 function read_arrays_jl_c(filename)
-  file = read(filename)
-  n = sum(c == UInt8(',') || c == UInt8('\n') for c in file) + 1
-  if file[end] == UInt8('\n') # Pesky extra blank line
-    n -= 1
-  end
-  keys = zeros(Int, n)
-  indexes = zeros(Int, n)
-  values = zeros(Int, n)
-
+  fmt = "%ld%c"
   c = Ref{Cchar}(0)
   x = Ref{Int}(0)
+  n = 0
+  set = UInt8[',', '#']
+  f = ccall(:fopen, Ptr{Cvoid}, (Cstring, Cstring), filename, "r")
+  while ccall(:fscanf, Cint, (Ptr{Cvoid}, Cstring, Ref{Int}, Ref{Cchar}), f, fmt, x, c) == 2
+    if c[] in set
+      n += 1
+    end
+  end
+  ccall(:fclose, Ptr{Cvoid}, (Ptr{Cvoid},), f)
+
+  keys = zeros(Int, n)
+  indexes = zeros(Int, n)
+  elements = zeros(Int, n)
+
   count = 1
   k = -1
   j = 0
   f = ccall(:fopen, Ptr{Cvoid}, (Cstring, Cstring), filename, "r")
-  while true
-    ccall(:fscanf, Cint, (Ptr{Cvoid}, Cstring, Ref{Int}, Ref{Cchar}), f, "%ld%c", x, c)
+  while ccall(:fscanf, Cint, (Ptr{Cvoid}, Cstring, Ref{Int}, Ref{Cchar}), f, fmt, x, c) == 2
     if c[] == Int8('#')
       k = x[]
       j = 0
@@ -25,12 +30,11 @@ function read_arrays_jl_c(filename)
       keys[count] = k
       indexes[count] = j
       j += 1
-      values[count] = x[]
+      elements[count] = x[]
       count += 1
     end
-    count > n && break
   end
   ccall(:fclose, Ptr{Cvoid}, (Ptr{Cvoid},), f)
 
-  return keys, indexes, values
+  return keys, indexes, elements
 end

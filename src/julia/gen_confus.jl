@@ -3,8 +3,11 @@ function gen_confus(;
   n_rows = 50,
   col_max = 5000,
 )
-  # TODO: Avoid repeated keys
   keys = sort(rand(100_000:999_999, n_rows))
+  while !allunique(keys)
+    keys = unique(keys)
+    keys = [keys; rand(1:100_000, n_rows - length(keys))]
+  end
   open(filename, "w") do io
     for i = 1:n_rows
       n_cols = round(Int, exp(rand(0:0.1:log(col_max))))

@@ -1,14 +1,11 @@
 using Parsers
 
-function read_arrays_jl_manual(filename)
+function read_arrays_jl_opt(filename)
   file = read(filename)
-  n = sum(c == UInt8(',') || c == UInt8('\n') for c in file) + 1
-  if file[end] == UInt8('\n') # Pesky extra blank line
-    n -= 1
-  end
+  n = sum(c == UInt8(',') || c == UInt8('#') for c in file)
   keys = zeros(Int, n)
   indexes = zeros(Int, n)
-  values = zeros(Int, n)
+  elements = zeros(Int, n)
 
   count, k, j, fi, fj, fn = 1, -1, 0, 1, 2, length(file)
 
@@ -23,12 +20,12 @@ function read_arrays_jl_manual(filename)
       keys[count] = k
       indexes[count] = j
       j += 1
-      values[count] = x
+      elements[count] = x
       count += 1
     end
     fi = fj + 1
     fj = fi + 1
   end
 
-  return keys, indexes, values
+  return keys, indexes, elements
 end

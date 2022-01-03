@@ -57,14 +57,16 @@ RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f64380
 
 # INSTALL JULIA
 #====================================
-COPY Project.toml Manifest.toml *.jl *.py /app/
-COPY src/ /app/src/
+COPY Project.toml /app/
 
 RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
     bash /app/jill.sh -y -v 1.6.4 && \
     export PYTHON="/usr/local/bin/python" && \
     julia --project -e 'using Pkg; Pkg.instantiate()' && \
     python -c 'import julia; julia.install()'
+
+# COPY SCRIPTS
+COPY src/ /app/src/
 
 # CLEAN UP
 #===========================================

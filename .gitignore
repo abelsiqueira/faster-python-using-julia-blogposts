@@ -1,4 +1,8 @@
+dataset
 env
 gen-data
 out
 ticcl-output-reader
+xtensor*
+xtensor-python*
+xtl*

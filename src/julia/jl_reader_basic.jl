@@ -1,25 +1,15 @@
-using Parsers
-
-function read_arrays_jl_dict(filename)
-  lines = split.(readlines(filename), "#")
-  D = Dict(
-    Parsers.parse(Int, line[1]) => Parsers.parse.(Int, split(line[2], ","))
-    for line in lines
-  )
-  n = sum(length(v) for (k, v) in D)
-  keys = zeros(Int, n)
-  indexes = zeros(Int, n)
-  values = zeros(Int, n)
-
-  count = 0
-  for (k, v) in D
+function read_arrays_jl_basic(filename)
+  keys = Int[]
+  indexes = Int[]
+  elements = Int[]
+  for line in readlines(filename)
+    s = split(line, "#")
+    k, v = parse(Int, s[1]), parse.(Int, split(s[2], ","))
     m = length(v)
-    idx = count+1:count+m
-    keys[idx] .= k
-    indexes[idx] .= 0:m-1
-    values[idx] .= v
-    count += m
+    keys = [keys; fill(k, m)]
+    indexes = [indexes; 0:m-1]
+    elements = [elements; v]
   end
 
-  return keys, indexes, values
+  return keys, indexes, elements
 end

@@ -9,33 +9,37 @@ jl.eval('Pkg.activate(".")')
 from julia import Main
 jl.eval('include("src/julia/jl_reader_c.jl")')
 jl.eval('include("src/julia/jl_reader_basic.jl")')
+jl.eval('include("src/julia/jl_reader_prealloc.jl")')
 jl.eval('include("src/julia/jl_reader_opt.jl")')
 
 def load_pandas(filename):
     df_tuples = pd.read_csv(filename,
-                        sep='#', index_col=0, names=['key', 'values'],
-                        converters={'values': lambda w: tuple(w.split(','))})
-    df = df_tuples['values'].apply(pd.Series, 1).stack().astype('uint64').to_frame()
-    df.index.rename(["key", "list_index"], inplace=True)
-    df.rename({0: 'value'}, axis='columns', inplace=True)
+                        sep='#', index_col=0, names=['key', 'elements'],
+                        converters={'elements': lambda w: tuple(w.split(','))})
+    df = df_tuples['elements'].apply(pd.Series, 1).stack().astype('uint64').to_frame()
+    df.index.rename(["key", "index"], inplace=True)
+    df.rename({0: 'element'}, axis='columns', inplace=True)
     return df
 
 def load_external(arrays):
     df = pd.DataFrame.from_records({
             "key": arrays[0],
-            "list_index": arrays[1],
-            "value": arrays[2]
-        }, index=["key", "list_index"])
+            "index": arrays[1],
+            "element": arrays[2]
+        }, index=["key", "index"])
     return df
 
 def read_arrays_julia_c(filename):
     return jl.eval(f'read_arrays_jl_c("{filename}")')
 
 def read_arrays_julia_basic(filename):
-    return jl.eval(f'read_arrays_jl_dict("{filename}")')
+    return jl.eval(f'read_arrays_jl_basic("{filename}")')
+
+def read_arrays_julia_prealloc(filename):
+    return jl.eval(f'read_arrays_jl_prealloc("{filename}")')
 
 def read_arrays_julia_opt(filename):
-    return jl.eval(f'read_arrays_jl_manual("{filename}")')
+    return jl.eval(f'read_arrays_jl_opt("{filename}")')
 
 def read_arrays_cpp(filename):
     return ticcl_output_reader.load_confuslist_index(filename)

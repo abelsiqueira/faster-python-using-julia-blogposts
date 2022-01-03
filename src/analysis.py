@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mc
 from pathlib import Path
+import seaborn as sns
 
 def adjust_lightness(color, amount=1.4):
     try:
@@ -28,7 +29,7 @@ spc_args = {
         'color': '#333333',
     },
     'cpp': {
-        'label': 'Python + C++',
+        'label': 'C++',
         'color': '#1f77b4',
     },
     'julia_c': {
@@ -36,11 +37,15 @@ spc_args = {
         'color': '#2ca02c',
     },
     'julia_basic': {
-        'label': 'Python + Basic Julia',
+        'label': 'Basic Julia',
         'color': '#9467bd',
     },
+    'julia_prealloc': {
+        'label': 'Prealloc Julia',
+        'color': '#70a3a9',
+    },
     'julia_opt': {
-        'label': 'Python + Optimized Julia',
+        'label': 'Optimized Julia',
         'color': '#d62728',
     }
 }
@@ -50,16 +55,26 @@ def read_experiments_data(filename='out/experiments.csv'):
     df.sort_values('elements', inplace=True)
     df_complete = pd.DataFrame({
         'elements': df['elements'],
-        'python': df['pure_python'],
+        'python': df['python'],
     })
     df_read = pd.DataFrame({
         'elements': df['elements'],
     })
-    for key in ['julia_c', 'julia_basic', 'julia_opt', 'cpp']:
+    df_relative_cpp = pd.DataFrame({
+        'elements': df['elements'],
+        'python': df['python'] / (df['load_external'] + df['cpp'])
+    })
+    df_relative_opt = pd.DataFrame({
+        'elements': df['elements'],
+        'python': df['python'] / (df['load_external'] + df['julia_opt'])
+    })
+    for key in spc_args.keys() - 'python':
         df_read[key] = df[key]
         df_complete[key] = df[key] + df['load_external']
+        df_relative_cpp[key] = df_complete[key] / (df['load_external'] + df['cpp'])
+        df_relative_opt[key] = df_complete[key] / (df['load_external'] + df['julia_opt'])
 
-    return df, df_read, df_complete
+    return df, df_read, df_complete, df_relative_cpp, df_relative_opt
 
 def plots_langs_per_element(
         df,
@@ -68,11 +83,14 @@ def plots_langs_per_element(
         add_y_limits=False,
         output_dir='out/plots',
         loglog=True,
+        yscale=True,
+        ylabel='Time (s)',
+        use_white=False,
     ):
     if subset is None:
         subset = [c for c in df.columns if c != 'elements']
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    plt.rcParams.update(white_colors)
+    if use_white:
+        plt.rcParams.update(white_colors)
     plt.figure(figsize=(10, 6))
     for key in subset:
         value = spc_args[key]
@@ -82,13 +100,14 @@ def plots_langs_per_element(
         plt.plot(df['elements'], df[key], label=lbl, color=value['color'])
 
     plt.xlabel('Number of elements')
-    plt.ylabel('Time (s)')
+    plt.ylabel(ylabel)
     if add_y_limits:
         plt.ylim(bottom=3e-5, top=20)
     plt.legend()
     if loglog:
         plt.xscale('log')
-        plt.yscale('log')
+        if yscale:
+            plt.yscale('log')
         plt.savefig(f'{output_dir}/time_{suffix}_loglog.png')
     else:
         plt.savefig(f'{output_dir}/time_{suffix}.png')
