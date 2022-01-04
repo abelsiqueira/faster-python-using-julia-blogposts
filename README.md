@@ -2,28 +2,37 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5708268.svg)](https://doi.org/10.5281/zenodo.5708268)
 
-See the [slides](slides).
+This material is part of a benchmark study about using Julia from Python.
+The idea was initially presented internally (See the [slides](slides)).
+We are turning it into a blog post that will be released soon.
 
-## TLDR
+## Summary
 
-After reading [Patrick's blog post][patrick], we decided to try to replace C++ with Julia to check:
-- How easy/hard it is
-- How much improvement can be gained with a basic version
-- How much improvement can be gained with an optimized version
+- We read [Patrick's blog post][patrick] about improving the reading of irregular files.
+- Patrick has a Python (Pandas) code that is slow.
+- Using some packages, he moves the reading and parsing to C++.
+- We decided to try to replace C++ with Julia to check:
+  - How easy/hard it is
+  - How much improvement can be gained with a basic Julia code;
+  - How much further improvement can be gained with an optimized Julia code.
 
-A basic version is already an improvement over the pure Python version, and an optimized version was faster than the C++ version. Here's a plot comparison all the versions:
+The cases we examined are below, with a plot with the comparison following it:
+
+- Python with Pandas, as seen in Patrick's post. label: "Pure Python".
+- Python with reading and parsing in C++, as seen in Patrick's post. label: "C++".
+- Python with reading and parsing in Julia, in 4 different versions:
+  - Basic Julia version with mostly disregard for efficiency, label="Basic Julia".
+  - Julia version trying to improve memory usage. label: "Prealloc Julia".
+  - Julia version where the elements are read with `fscanf` from C. label: "Julia + C parsing".
+  - Julia version reading the file as bytes and manually walking through the bytes. label: "Optimized Julia".
 
 <img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison.png" width="49%">
 <img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison-relative.png" width="49%">
 
-The versions are:
-
-- Pure Python: Python using Pandas.
-- C++: Python and C++.
-- Basic Julia: Basic Julia version with mostly disregard for efficiency.
-- Prealloc Julia: Julia version trying to improve memory usage.
-- Julia + C parsing: Julia version where the elements are read with `fscanf` from C.
-- Optimized Julia: Julia version reading the file as bytes and manually walking through the bytes.
+Take-aways (see blog post):
+- The "Basic Julia" case is already an improvement over the "Pure Python" case.
+- The "Optimized Julia" case is faster than the "C++" case.
+- If you don't know Julia nor C++, moving the slow code to Julia yields benefits faster and with less effort.
 
 ## Reproduction
 
@@ -36,7 +45,7 @@ The versions are:
   ```
   docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" jl-from-py:0.3.0 --max-num-files 0
   ```
-- You will find the output in the `out/` folder.
+- You will find the outputs in the `out/` folder.
 
 The docker runs the script `src/main.py` that runs `run_experiments.py` and `run_analysis.py`.
 
