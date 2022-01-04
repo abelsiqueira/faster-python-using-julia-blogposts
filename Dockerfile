@@ -3,6 +3,8 @@ FROM ubuntu:21.10
 LABEL MAINTAINER abel.siqueira@esciencecenter.nl
 ENV container docker
 ENV DEBIAN_FRONTEND noninteractive
+ENV LANG en_US.utf8
+ENV MAKEFLAGS -j4
 
 RUN mkdir /app
 WORKDIR /app
