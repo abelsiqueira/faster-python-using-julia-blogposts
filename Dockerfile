@@ -6,11 +6,9 @@ ENV container docker
 RUN mkdir /app
 WORKDIR /app
 
-# PACKAGES
-#===========================================
-RUN rm -f /etc/localtime && \
-    ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 
+# DEPENDENCIES
+#===========================================
 RUN apt-get update -y && apt-get upgrade -y && \
     apt-get install -y gcc git make cmake wget unzip \
         build-essential libssl-dev zlib1g-dev \
@@ -65,16 +63,21 @@ RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
     julia --project -e 'using Pkg; Pkg.instantiate()' && \
     python -c 'import julia; julia.install()'
 
+
 # COPY SCRIPTS
+#===========================================
 COPY src/ /app/src/
+
 
 # CLEAN UP
 #===========================================
+RUN rm -rf /var/cache/pacman/pkg/* \
+    /app/jill.sh \
+    /opt/julias/*.tar.gz \
+    /app/*.tar.gz
 
-RUN rm -rf /var/cache/pacman/pkg/* /app/jill.sh /opt/julias/*.tar.gz /app/*.tar.gz
 
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
 CMD ["--max-num-files", "2"]
-
 
 # docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0 2
