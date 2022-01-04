@@ -13,19 +13,25 @@ After reading [Patrick's blog post][patrick], we decided to try to replace C++ w
 
 A basic version is already an improvement over the pure Python version, and an optimized version was faster than the C++ version.
 
-## Reproduction
+## Building the docker images
+
+  ```shell
+docker build --tag jl-from-py:<VERSION>
+  ```
+
+## Reproducting the results
 
 - Download dataset and store in a folder called `gen-data`: [![Zenodo badge][dataset-badge]][dataset]
 
 - Get the image with
 
-  ```
+  ```shell
   docker pull abelsiqueira/jl-from-py:0.2.0
   ```
 
 - Run it with
 
-  ```
+  ```shell
   docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" jl-from-py:0.2.0 --max-num-files 1000
   ```
 
