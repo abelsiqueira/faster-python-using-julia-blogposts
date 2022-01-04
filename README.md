@@ -30,6 +30,13 @@ A basic version is already an improvement over the pure Python version, and an o
 
 The docker runs the script `src/main.py` that runs `run_experiments.py` and `run_analysis.py`.
 
+### Arguments
+
+- `--folder FOLDER`: Set the dataset folder. (Default: `dataset`).
+- `--max-num-files N`: Maximum number of files to read from can be used to limit the experiment. The files are traversed in sorted name order. Use 0 or a negative number to run all. (Default: `0`).
+- `--skip-after X`: Time threshold in seconds to skip the tests of a specific version. If the threshold is reached twice, that version is skipped in the additional tests. (Default: `10`).
+- `--skip VALUE1 [VALUE2 ...]`: List of versions to skip. Valid values: `python`, `cpp`, `julia_basic`, `julia_c`, `julia_prealloc`, `julia_opt`.
+
 [patrick]: https://blog.esciencecenter.nl/irregular-data-in-pandas-using-c-88ce311cb9ef
 [dataset]: https://zenodo.org/record/5816746
 [dataset-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.5816746.svg
