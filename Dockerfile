@@ -66,8 +66,7 @@ COPY src/ /app/src/
 
 # CLEAN UP
 #===========================================
-RUN rm -rf /var/cache/pacman/pkg/* \
-    /app/jill.sh \
+RUN rm -rf /app/jill.sh \
     /opt/julias/*.tar.gz \
     /app/*.tar.gz
 
