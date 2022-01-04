@@ -15,26 +15,21 @@ A basic version is already an improvement over the pure Python version, and an o
 
 ## Reproduction
 
-- Download dataset and store in a folder called `gen-data`: [![Zenodo badge][dataset-badge]][dataset]
 
+
+- Download dataset and store in a folder called `dataset`: [![Zenodo badge][dataset-badge]][dataset]
 - Get the image with
-
   ```
-  docker pull abelsiqueira/jl-from-py:0.2.0
+  docker pull abelsiqueira/jl-from-py:0.3.0
   ```
-
 - Run it with
-
   ```
-  docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" jl-from-py:0.2.0 --max-num-files 1000
+  docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" jl-from-py:0.3.0 --max-num-files 0
   ```
-
 - You will find the output in the `out/` folder.
 
 The docker runs the script `src/main.py` that runs `run_experiments.py` and `run_analysis.py`.
-The `--max-num-files` can be used to limit the experiment. The files are traversed in name order.
-You can also use `--folder` to set a different folder than `gen-data`.
 
 [patrick]: https://blog.esciencecenter.nl/irregular-data-in-pandas-using-c-88ce311cb9ef
-[dataset]: https://doi.org/10.5281/zenodo.5707672
-[dataset-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.5707672.svg
+[dataset]: https://zenodo.org/record/5816746
+[dataset-badge]: https://zenodo.org/badge/DOI/10.5281/zenodo.5816746.svg
