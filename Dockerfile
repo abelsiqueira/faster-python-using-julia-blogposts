@@ -8,7 +8,7 @@ WORKDIR /app
 
 # DEPENDENCIES
 #===========================================
-RUN apt-get update -y && apt-get upgrade -y && \
+RUN apt-get update -y && \
     apt-get install -y gcc git make cmake wget unzip \
         build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev curl llvm \
