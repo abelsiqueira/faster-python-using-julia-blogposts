@@ -11,11 +11,21 @@ After reading [Patrick's blog post][patrick], we decided to try to replace C++ w
 - How much improvement can be gained with a basic version
 - How much improvement can be gained with an optimized version
 
-A basic version is already an improvement over the pure Python version, and an optimized version was faster than the C++ version.
+A basic version is already an improvement over the pure Python version, and an optimized version was faster than the C++ version. Here's a plot comparison all the versions:
+
+<img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison.png" width="49%">
+<img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison-relative.png" width="49%">
+
+The versions are:
+
+- Pure Python: Python using Pandas.
+- C++: Python and C++.
+- Basic Julia: Basic Julia version with mostly disregard for efficiency.
+- Prealloc Julia: Julia version trying to improve memory usage.
+- Julia + C parsing: Julia version where the elements are read with `fscanf` from C.
+- Optimized Julia: Julia version reading the file as bytes and manually walking through the bytes.
 
 ## Reproduction
-
-
 
 - Download dataset and store in a folder called `dataset`: [![Zenodo badge][dataset-badge]][dataset]
 - Get the image with
