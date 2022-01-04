@@ -34,15 +34,22 @@ Take-aways (see blog post):
 - The "Optimized Julia" case is faster than the "C++" case.
 - If you don't know Julia nor C++, moving the slow code to Julia yields benefits faster and with less effort.
 
-## Reproduction
+## Building the docker images
+
+  ```shell
+docker build --tag jl-from-py:<VERSION>
+  ```
+
+## Reproducting the results
 
 - Download dataset and store in a folder called `dataset`: [![Zenodo badge][dataset-badge]][dataset]
 - Get the image with
-  ```
+  ```shell
   docker pull abelsiqueira/jl-from-py:0.3.0
   ```
 - Run it with
-  ```
+
+  ```shell
   docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" jl-from-py:0.3.0 --max-num-files 0
   ```
 - You will find the outputs in the `out/` folder.

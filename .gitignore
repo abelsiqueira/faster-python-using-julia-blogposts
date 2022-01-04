@@ -1,8 +1,17 @@
-dataset
+# virtual environments
 env
+venv
+
+# generated data
+dataset
 gen-data
 out
+
+# dependencies
 ticcl-output-reader
 xtensor*
 xtensor-python*
 xtl*
+
+# cache
+src/__pycache__
