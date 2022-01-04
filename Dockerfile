@@ -19,15 +19,16 @@ RUN apt-get update -y && \
 
 # INSTALL PYTHON
 #===========================================
+COPY requirements.txt /app/
+
 RUN wget https://www.python.org/ftp/python/3.9.9/Python-3.9.9.tgz && \
     tar -zxf Python-3.9.9.tgz && \
     cd Python-3.9.9 && \
     ./configure --with-ensurepip=install --enable-shared && make && make install && \
     ldconfig && \
     ln -sf python3 /usr/local/bin/python
-COPY requirements.txt /app/
-ENV PATH "/app/env/bin:$PATH"
-RUN python -m venv env && \
+
+RUN python -m pip install --upgrade pip setuptools wheel && \
     python -m pip install -r requirements.txt
 
 # INSTALL ticcl-output-reader and dependencies
@@ -64,23 +65,24 @@ RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
 
 # COPY SCRIPTS
 #===========================================
-COPY src/ /app/src/
+COPY src /app/
 
 
 # CLEAN UP
 #===========================================
 RUN rm -rf /app/jill.sh \
     /opt/julias/*.tar.gz \
-    /app/*.tar.gz
+    /app/*.tar.gz /app/Python-3.9.9.tgz /app/ticcl.zip /app/__pycache__
 
 RUN apt-get purge -y gcc git make cmake wget unzip \
         build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev curl llvm \
-        libncurses5-dev libncursesw5-dev xz-utils tk-dev
+        libncurses5-dev libncursesw5-dev xz-utils tk-dev && \
+    apt-get autoremove -y
 
 
-ENTRYPOINT ["python", "-u", "/app/src/main.py"]
-CMD ["--max-num-files", "2"]
+# ENTRYPOINT ["python", "-u", "/app/src/main.py"]
+# CMD ["--max-num-files", "2"]
 
 # build: docker build --tag jl-from-py:0.3.0 .
 # run: docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.3.0 2
