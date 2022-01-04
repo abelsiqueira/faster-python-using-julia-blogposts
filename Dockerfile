@@ -1,4 +1,4 @@
-FROM ubuntu:20.10
+FROM ubuntu:21.10
 
 LABEL MAINTAINER abel.siqueira@esciencecenter.nl
 ENV container docker
@@ -27,7 +27,7 @@ ENV PATH "/app/env/bin:$PATH"
 RUN python -m venv env && \
     python -m pip install -r requirements.txt
 
-# INSTALL C++ PACKAGES
+# INSTALL ticcl-output-reader and dependencies
 #================================
 RUN wget https://github.com/xtensor-stack/xtl/archive/refs/tags/0.7.4.tar.gz -O xtl.tar.gz && \
     tar -zxf xtl.tar.gz && \
@@ -69,6 +69,11 @@ COPY src/ /app/src/
 RUN rm -rf /app/jill.sh \
     /opt/julias/*.tar.gz \
     /app/*.tar.gz
+
+RUN apt-get purge -y gcc git make cmake wget unzip \
+        build-essential libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev curl llvm \
+        libncurses5-dev libncursesw5-dev xz-utils tk-dev
 
 
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
