@@ -2,6 +2,7 @@ FROM ubuntu:21.10
 
 LABEL MAINTAINER abel.siqueira@esciencecenter.nl
 ENV container docker
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN mkdir /app
 WORKDIR /app
