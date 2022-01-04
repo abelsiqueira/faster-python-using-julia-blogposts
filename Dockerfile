@@ -6,7 +6,6 @@ ENV container docker
 RUN mkdir /app
 WORKDIR /app
 
-
 # DEPENDENCIES
 #===========================================
 RUN apt-get update -y && apt-get upgrade -y && \
@@ -35,19 +34,16 @@ RUN wget https://github.com/xtensor-stack/xtl/archive/refs/tags/0.7.4.tar.gz -O 
     cd /app/xtl-0.7.4 && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr && \
     make install
-
 RUN wget https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.24.0.tar.gz -O xtensor.tar.gz && \
     tar -zxf xtensor.tar.gz && \
     cd /app/xtensor-0.24.0 && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr && \
     make install
-
 RUN wget https://github.com/xtensor-stack/xtensor-python/archive/refs/tags/0.26.0.tar.gz -O xtensor-python.tar.gz && \
     tar -zxf xtensor-python.tar.gz && \
     cd /app/xtensor-python-0.26.0 && \
     cmake -DCMAKE_INSTALL_PREFIX=/usr && \
     make install
-
 RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f6438053d660fd57b645a41b0f9345.zip -O ticcl.zip && \
     unzip ticcl.zip && \
     mv ticcl-output-reader* ticcl-output-reader && \
@@ -56,7 +52,6 @@ RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f64380
 # INSTALL JULIA
 #====================================
 COPY Project.toml /app/
-
 RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
     bash /app/jill.sh -y -v 1.6.4 && \
     export PYTHON="/usr/local/bin/python" && \
@@ -80,4 +75,5 @@ RUN rm -rf /var/cache/pacman/pkg/* \
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
 CMD ["--max-num-files", "2"]
 
-# docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.1.0 2
+# build: docker build --tag jl-from-py:0.3.0 .
+# run: docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.3.0 2
