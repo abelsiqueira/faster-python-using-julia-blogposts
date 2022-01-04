@@ -26,8 +26,8 @@ The cases we examined are below, with a plot with the comparison following it:
   - Julia version where the elements are read with `fscanf` from C. label: "Julia + C parsing".
   - Julia version reading the file as bytes and manually walking through the bytes. label: "Optimized Julia".
 
-<img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison.png" width="49%">
-<img src="https://github.com/abelsiqueira/call-julia-from-python-experiments/assets/comparison-relative.png" width="49%">
+<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/assets/comparison.png" width="49%">
+<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/assets/comparison-relative.png" width="49%">
 
 Take-aways (see blog post):
 - The "Basic Julia" case is already an improvement over the "Pure Python" case.
