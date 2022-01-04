@@ -12,3 +12,6 @@ ticcl-output-reader
 xtensor*
 xtensor-python*
 xtl*
+
+# cache
+src/__pycache__
