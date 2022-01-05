@@ -65,7 +65,7 @@ RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
 
 # COPY SCRIPTS
 #===========================================
-COPY src /app/
+COPY src/ /app/src/
 
 
 # CLEAN UP
