@@ -54,6 +54,8 @@ docker build --tag jl-from-py:<VERSION>
   ```
 - You will find the outputs in the `out/` folder.
 
+The execution of this script with default options took 13 minutes and 14 seconds on a desktop computer with the Intel chip i5-4440 (3.1GHz) and 16GiB of RAM.
+
 The docker runs the script `src/main.py` that runs `run_experiments.py` and `run_analysis.py`.
 
 ### Arguments
