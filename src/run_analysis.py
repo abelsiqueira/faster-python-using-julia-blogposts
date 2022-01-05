@@ -31,22 +31,23 @@ plots_langs_per_element(
 plots_langs_per_element(df_complete, subset=['python', 'cpp'], suffix='original')
 plots_langs_per_element(df_rel_cpp, subset=['python', 'cpp'], suffix='original-relative', yscale=False, ylabel='Time relative to "C++" time')
 
-subset_count = 1
-subset = ['cpp', 'python']
-for key in ['julia_basic', 'julia_prealloc', 'julia_c', 'julia_opt']:
-    subset.append(key)
+def subset_plot(subset, count):
     plots_langs_per_element(
         df_complete,
         subset=subset,
-        suffix='subset-{}'.format(subset_count),
+        suffix='subset-{}'.format(count),
     )
     plots_langs_per_element(
         df_rel_cpp,
         subset=subset,
-        suffix='subset-{}-relative'.format(subset_count),
+        suffix='subset-{}-relative'.format(count),
         ylabel='Time relative to "C++" time',
     )
-    subset_count += 1
+subset_plot(['python', 'cpp'], 0)
+subset_plot(['python', 'julia_basic', 'cpp'], 1)
+subset_plot(['python', 'julia_basic', 'julia_prealloc', 'cpp'], 2)
+subset_plot(['python', 'julia_basic', 'julia_prealloc', 'julia_c', 'cpp'], 3)
+subset_plot(['python', 'julia_basic', 'julia_prealloc', 'julia_c', 'cpp', 'julia_opt'], 4)
 
 plots_langs_per_element(
     df_rel_opt,
