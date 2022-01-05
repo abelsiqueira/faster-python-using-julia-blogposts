@@ -26,13 +26,17 @@ The cases we examined are below, with a plot with the comparison following it:
   - Julia version where the elements are read with `fscanf` from C. label: "Julia + C parsing".
   - Julia version reading the file as bytes and manually walking through the bytes. label: "Optimized Julia".
 
-<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/assets/comparison.png" width="49%">
-<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/assets/comparison-relative.png" width="49%">
+<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/out/plots/time_subset-4_loglog.png" width="49%">
+<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/out/plots/time_subset-4-relative_loglog.png" width="49%">
 
 Take-aways (see blog post):
 - The "Basic Julia" case is already an improvement over the "Pure Python" case.
 - The "Optimized Julia" case is faster than the "C++" case.
 - If you don't know Julia nor C++, moving the slow code to Julia yields benefits faster and with less effort.
+
+The image below shows the speedup gain over the effort to get there:
+
+<img src="https://raw.githubusercontent.com/abelsiqueira/call-julia-from-python-experiments/main/out/plots/gain-over-effort.png" width="49%">
 
 ## Building the docker images
 
