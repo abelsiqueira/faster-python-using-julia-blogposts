@@ -19,6 +19,7 @@ plt.savefig("out/plots/histogram.png")
 
 plt.figure()
 sns.scatterplot(df.elements, df.rows)
+plt.xscale('log')
 plt.savefig("out/plots/rows-vs-elements.png")
 
 # These plots compare the language time over the number of elements.

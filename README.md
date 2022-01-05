@@ -54,7 +54,7 @@ docker build --tag jl-from-py:<VERSION>
 - Run it with
 
   ```shell
-  docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" jl-from-py:0.3.0 --max-num-files 0
+  docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" jl-from-py:0.3.1 --max-num-files 0
   ```
 - You will find the outputs in the `out/` folder.
 
