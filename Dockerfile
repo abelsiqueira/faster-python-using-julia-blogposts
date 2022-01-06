@@ -84,7 +84,7 @@ RUN apt-get purge -y gcc git make cmake wget unzip \
 
 
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
-CMD ["--max-num-files", "2"]
+CMD ["--max-num-files", "0", "--skip-after", "0"]
 
 # build: docker build --tag jl-from-py:0.3.0 .
 # run: docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.3.0 2
