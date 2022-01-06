@@ -6,14 +6,18 @@ function gen_confus(;
   keys = sort(rand(100_000:999_999, n_rows))
   while !allunique(keys)
     keys = unique(keys)
-    keys = [keys; rand(1:100_000, n_rows - length(keys))]
+    keys = sort([keys; rand(1:100_000, n_rows - length(keys))])
   end
+  n_elem = 0
   open(filename, "w") do io
     for i = 1:n_rows
-      n_cols = round(Int, exp(rand(0:0.1:log(col_max))))
+      n_cols = rand(1:col_max)
+      n_elem += n_cols
       cols = sort(rand(100_000:999_999, n_cols))
       line = string(keys[i]) * "#" * join(cols, ",")
       println(io, line)
     end
   end
+
+  return n_elem
 end
