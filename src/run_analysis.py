@@ -3,25 +3,6 @@ from analysis import *
 df, df_read, df_complete, df_rel_cpp, df_rel_opt = read_experiments_data('out/experiments.csv')
 Path("out/plots").mkdir(parents=True, exist_ok=True)
 
-# Data analysis
-style = {
-    "x": "elements",
-    "shrink": 0.9,
-    "bins": 10,
-}
-plt.figure()
-sns.histplot(df, log_scale=True, **style)
-plt.savefig("out/plots/histogram-log.png")
-
-plt.figure()
-sns.histplot(df, **style)
-plt.savefig("out/plots/histogram.png")
-
-plt.figure()
-sns.scatterplot(df.elements, df.rows)
-plt.xscale('log')
-plt.savefig("out/plots/rows-vs-elements.png")
-
 # Python only
 plots_langs_per_element(df_complete, subset=['python'], suffix='python-only')
 

@@ -11,8 +11,8 @@ from analysis import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--folder', type=str, help='Folder containing the problem set', default='dataset')
-parser.add_argument('--max-num-files', type=int, help='Limit the number of files to be read from the folder.', default=math.inf)
-parser.add_argument('--skip-after', type=float, help='Time threshold to skip the tests of a language. The second time a language run takes more than this threshold, no more tests for this language are done.', default=10.0)
+parser.add_argument('--max-num-files', type=int, help='Limit the number of files to be read from the folder. Set to 0 to read all.', default=0)
+parser.add_argument('--skip-after', type=float, help='Time threshold to skip the tests of a language. The second time a language run takes more than this threshold, no more tests for this language are done. Set to 0 to disable. (Default = 0)', default=0.0)
 parser.add_argument('--skip', type=str, nargs='+', help='Languages to skip. Possible values are {}'.format(', '.join(spc_args)), default=[])
 
 args = parser.parse_args()

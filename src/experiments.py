@@ -5,9 +5,9 @@ import time
 
 def experiments(
     folder = "dataset",
-    max_num_files = None,
+    max_num_files = 0,
     tries = 3,
-    skip_after = 10.0,
+    skip_after = 0.0,
     skip = [],
     ):
 
@@ -27,6 +27,7 @@ def experiments(
     rows = []
 
     files = sorted(os.scandir(folder), key=lambda x: x.name)
+    files = list(filter(lambda x: os.path.splitext(x)[1] != '.csv', files))
     N = len(list(files))
     if max_num_files is None or max_num_files <= 0:
         max_num_files = N
@@ -53,7 +54,7 @@ def experiments(
                 df = pandas_tuple_to_dataframe(df_tuples)
             times['pandas_tuples_to_df'].append((time.time() - start) / tries)
 
-        times['python'] = times.pandas_read_csv + times.pandas_tuples_to_df
+        times['python'].append(times['pandas_read_csv'][-1] + times['pandas_tuples_to_df'][-1])
 
         # Separate read
         for (key, read_fun) in [
@@ -85,7 +86,7 @@ def experiments(
             tries = 1
 
         for k in times.keys() - ['load_external']:
-            if times[k][-1] > skip_after:
+            if skip_after > 0 and times[k][-1] > skip_after:
                 if k in offenders:
                     skip.append(k)
                 else:
