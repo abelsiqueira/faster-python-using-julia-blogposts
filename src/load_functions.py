@@ -3,7 +3,7 @@ import pandas as pd
 import ticcl_output_reader
 
 from julia.api import Julia
-jl = Julia(runtime="julia-1.6.4")
+jl = Julia()
 jl.eval('using Pkg')
 jl.eval('Pkg.activate(".")')
 from julia import Main

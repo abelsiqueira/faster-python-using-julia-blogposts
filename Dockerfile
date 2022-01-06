@@ -5,6 +5,8 @@ ENV container docker
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.utf8
 ENV MAKEFLAGS -j4
+ENV PYTHON_VERSION 3.10.1
+ENV JULIA_VERSION 1.7.1
 
 RUN mkdir /app
 WORKDIR /app
@@ -21,9 +23,9 @@ RUN apt-get update -y && \
 #===========================================
 COPY requirements.txt /app/
 
-RUN wget https://www.python.org/ftp/python/3.9.9/Python-3.9.9.tgz && \
-    tar -zxf Python-3.9.9.tgz && \
-    cd Python-3.9.9 && \
+RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
+    tar -zxf Python-$PYTHON_VERSION.tgz && \
+    cd Python-$PYTHON_VERSION && \
     ./configure --with-ensurepip=install --enable-shared && make && make install && \
     ldconfig && \
     ln -sf python3 /usr/local/bin/python
@@ -57,7 +59,7 @@ RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f64380
 #====================================
 COPY Project.toml /app/
 RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
-    bash /app/jill.sh -y -v 1.6.4 && \
+    bash /app/jill.sh -y -v $JULIA_VERSION && \
     export PYTHON="/usr/local/bin/python" && \
     julia --project -e 'using Pkg; Pkg.instantiate()' && \
     python -c 'import julia; julia.install()'
