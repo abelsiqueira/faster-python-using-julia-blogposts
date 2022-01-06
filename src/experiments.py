@@ -13,6 +13,8 @@ def experiments(
 
     times = {
         'python': [],
+        'pandas_read_csv': [],
+        'pandas_tuples_to_df': [],
         'julia_c': [],
         'julia_basic': [],
         'julia_prealloc': [],
@@ -38,12 +40,20 @@ def experiments(
         filename = filename.path
         # Complete Python
         if 'python' in skip:
-            times['python'].append(math.nan)
+            times['pandas_read_csv'].append(math.nan)
+            times['pandas_tuples_to_df'].append(math.nan)
         else:
             start = time.time()
             for _ in range(0, tries):
-                df = load_pandas(filename)
-            times['python'].append((time.time() - start) / tries)
+                df_tuples = pandas_read_csv(filename)
+            times['pandas_read_csv'].append((time.time() - start) / tries)
+
+            start = time.time()
+            for _ in range(0, tries):
+                df = pandas_tuple_to_dataframe(df_tuples)
+            times['pandas_tuples_to_df'].append((time.time() - start) / tries)
+
+        times['python'] = times.pandas_read_csv + times.pandas_tuples_to_df
 
         # Separate read
         for (key, read_fun) in [
@@ -65,13 +75,15 @@ def experiments(
         start = time.time()
         for _ in range(0, tries):
             df = load_external(arrays)
-        elements.append(df.shape[0])
-        rows.append(sum(1 for _ in open(filename)))
         times['load_external'].append((time.time() - start) / tries)
 
+        elements.append(df.shape[0])
+        rows.append(sum(1 for _ in open(filename)))
+
         # Slow part
-        if tries > 1 and times['load_external'][-1] > 0.01:
+        if tries > 1 and times['load_external'][-1] > 0.1:
             tries = 1
+
         for k in times.keys() - ['load_external']:
             if times[k][-1] > skip_after:
                 if k in offenders:
@@ -82,7 +94,7 @@ def experiments(
         # Progress
         perc = round(100 * (i + 1) / N, 1)
         print(f'progress = {perc}%, file {filename}')
-        print('  ' + ' '.join([f'{k}:{v[-1]}' for k, v in times.items()]))
+        print('  ' + ' '.join([f'{k}:{round(v[-1], 4)}' for k, v in times.items()]))
 
     df = pd.DataFrame({
         'elements': elements,

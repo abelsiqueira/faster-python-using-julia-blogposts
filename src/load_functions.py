@@ -12,14 +12,20 @@ jl.eval('include("src/julia/jl_reader_basic.jl")')
 jl.eval('include("src/julia/jl_reader_prealloc.jl")')
 jl.eval('include("src/julia/jl_reader_opt.jl")')
 
-def load_pandas(filename):
+def pandas_read_csv(filename):
     df_tuples = pd.read_csv(filename,
                         sep='#', index_col=0, names=['key', 'elements'],
                         converters={'elements': lambda w: tuple(w.split(','))})
+    return df_tuples
+
+def pandas_tuple_to_dataframe(df_tuples):
     df = df_tuples['elements'].apply(pd.Series, 1).stack().astype('uint64').to_frame()
     df.index.rename(["key", "index"], inplace=True)
     df.rename({0: 'element'}, axis='columns', inplace=True)
     return df
+
+def load_pandas(filename):
+    return pandas_tuple_to_dataframe(pandas_read_csv(filename))
 
 def load_external(arrays):
     df = pd.DataFrame.from_records({

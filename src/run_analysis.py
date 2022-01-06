@@ -22,6 +22,9 @@ sns.scatterplot(df.elements, df.rows)
 plt.xscale('log')
 plt.savefig("out/plots/rows-vs-elements.png")
 
+# Python only
+plots_langs_per_element(df_complete, subset=['python'], suffix='python-only')
+
 # These plots compare the language time over the number of elements.
 plots_langs_per_element(
     df_complete,
@@ -49,10 +52,11 @@ subset_plot(['python', 'julia_basic', 'cpp'], 1)
 subset_plot(['python', 'julia_basic', 'julia_prealloc', 'cpp'], 2)
 subset_plot(['python', 'julia_basic', 'julia_prealloc', 'julia_c', 'cpp'], 3)
 subset_plot(['python', 'julia_basic', 'julia_prealloc', 'julia_c', 'cpp', 'julia_opt'], 4)
+fullset = ['python', 'julia_basic', 'julia_prealloc', 'julia_c', 'cpp', 'julia_opt']
 
 plots_langs_per_element(
     df_rel_opt,
-    subset=subset,
+    subset=fullset,
     suffix='subset-relative-opt',
     ylabel='Time relative to "Optimized Julia" time',
 )
