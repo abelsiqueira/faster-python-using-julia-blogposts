@@ -6,7 +6,7 @@ do
     for jlver in 1.6.5 1.7.1
     do
         echo "Building for Python: ${pyver}  Julia: ${jlver}"
-        tagName=py$(echo ${pyver} | cut -d"." -f1-2)-jl$(echo ${jlver} | cut -d"." -f1-2)
+        tagName=abelsiqueira/python-and-julia:py$(echo ${pyver} | cut -d"." -f1-2)-jl$(echo ${jlver} | cut -d"." -f1-2)
         docker build --file Dockerfile \
             --tag ${tagName} \
             --build-arg PYTHON_VERSION=${pyver} \
