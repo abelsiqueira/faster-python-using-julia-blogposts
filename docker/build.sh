@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 for pyver in 3.10.1 3.9.9
 do
@@ -13,5 +14,3 @@ do
             .
     done
 done
-
-
