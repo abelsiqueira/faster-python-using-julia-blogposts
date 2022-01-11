@@ -1,10 +1,9 @@
-# Calling Julia from Python - an experiment on data loading
+# Calling Julia from Python - blog post material
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5708268.svg)](https://doi.org/10.5281/zenodo.5708268)
 
-This material is part of a benchmark study about using Julia from Python.
-The idea was initially presented internally (See the [slides](slides)).
-We are turning it into a blog post that will be released soon.
+This material is part of a series of blog posts about using Julia from Python (Soon).
+The idea was initially presented internally at the Netherlands eScience Center(See the [slides](slides)).
 
 ## Summary
 
