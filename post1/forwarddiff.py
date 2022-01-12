@@ -27,7 +27,7 @@ def taylor(x, a):
         Main.g2(a) * (x - a)**2 / 2 + \
         Main.g3(a) * (x - a)**3 / 6
 
-plt.figure()
+plt.figure(figsize=(10,6))
 plt.plot(domain, image)
 plt.scatter([a], [Main.g(a)], color='red')
 plt.plot(domain, taylor(domain, a), color='red')

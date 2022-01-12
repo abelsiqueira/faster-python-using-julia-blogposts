@@ -34,7 +34,7 @@ spc_args = {
     },
     'julia_c': {
         'label': 'Julia + C parsing',
-        'color': '#2ca02c',
+        'color': '#97881e',
     },
     'julia_basic': {
         'label': 'Basic Julia',
