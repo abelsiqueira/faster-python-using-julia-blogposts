@@ -1,14 +1,11 @@
-FROM ubuntu:21.10
+FROM abelsiqueira/python-and-julia:py3.10-jl1.6
 
 LABEL MAINTAINER abel.siqueira@esciencecenter.nl
 ENV container docker
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.utf8
 ENV MAKEFLAGS -j4
-ENV PYTHON_VERSION 3.10.1
-ENV JULIA_VERSION 1.7.1
 
-RUN mkdir /app
 WORKDIR /app
 
 # DEPENDENCIES
@@ -19,19 +16,11 @@ RUN apt-get update -y && \
         libbz2-dev libreadline-dev libsqlite3-dev curl llvm \
         libncurses5-dev libncursesw5-dev xz-utils tk-dev
 
-# INSTALL PYTHON
+# INSTALL PYTHON DEPENDENCIES
 #===========================================
 COPY requirements.txt /app/
 
-RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz && \
-    tar -zxf Python-$PYTHON_VERSION.tgz && \
-    cd Python-$PYTHON_VERSION && \
-    ./configure --with-ensurepip=install --enable-shared && make && make install && \
-    ldconfig && \
-    ln -sf python3 /usr/local/bin/python
-
-RUN python -m pip install --upgrade pip setuptools wheel && \
-    python -m pip install -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
 # INSTALL ticcl-output-reader and dependencies
 #================================
@@ -58,11 +47,7 @@ RUN wget https://github.com/TICCLAT/ticcl-output-reader/archive/9474533092f64380
 # INSTALL JULIA
 #====================================
 COPY Project.toml /app/
-RUN wget https://raw.githubusercontent.com/abelsiqueira/jill/main/jill.sh && \
-    bash /app/jill.sh -y -v $JULIA_VERSION && \
-    export PYTHON="/usr/local/bin/python" && \
-    julia --project -e 'using Pkg; Pkg.instantiate()' && \
-    python -c 'import julia; julia.install()'
+RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
 
 # COPY SCRIPTS
@@ -72,9 +57,7 @@ COPY src/ /app/src/
 
 # CLEAN UP
 #===========================================
-RUN rm -rf /app/jill.sh \
-    /opt/julias/*.tar.gz \
-    /app/*.tar.gz /app/Python-3.9.9.tgz /app/ticcl.zip /app/__pycache__
+RUN rm -rf /app/*.tar.gz /app/ticcl.zip /app/__pycache__
 
 RUN apt-get purge -y gcc git make cmake wget unzip \
         build-essential libssl-dev zlib1g-dev \
@@ -86,5 +69,5 @@ RUN apt-get purge -y gcc git make cmake wget unzip \
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
 CMD ["--max-num-files", "0", "--skip-after", "0"]
 
-# build: docker build --tag jl-from-py:0.3.0 .
-# run: docker run --rm --volume "./gen-data:/app/gen-data" --volume "./out:/app/out" jl-from-py:0.3.0 2
+# build: docker build --tag abelsiqueira/faster-python-with-julia-post3 .
+# run: docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" abelsiqueira/faster-python-with-julia-post3

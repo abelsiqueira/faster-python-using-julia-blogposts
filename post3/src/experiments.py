@@ -44,15 +44,20 @@ def experiments(
             times['pandas_read_csv'].append(math.nan)
             times['pandas_tuples_to_df'].append(math.nan)
         else:
-            start = time.time()
-            for _ in range(0, tries):
-                df_tuples = pandas_read_csv(filename)
-            times['pandas_read_csv'].append((time.time() - start) / tries)
+            try:
+                print(f'Running python')
+                start = time.time()
+                for _ in range(0, tries):
+                    df_tuples = pandas_read_csv(filename)
+                times['pandas_read_csv'].append((time.time() - start) / tries)
 
-            start = time.time()
-            for _ in range(0, tries):
-                df = pandas_tuple_to_dataframe(df_tuples)
-            times['pandas_tuples_to_df'].append((time.time() - start) / tries)
+                start = time.time()
+                for _ in range(0, tries):
+                    df = pandas_tuple_to_dataframe(df_tuples)
+                times['pandas_tuples_to_df'].append((time.time() - start) / tries)
+            except:
+                times['pandas_read_csv'].append(math.nan)
+                times['pandas_tuples_to_df'].append(math.nan)
 
         times['python'].append(times['pandas_read_csv'][-1] + times['pandas_tuples_to_df'][-1])
 
@@ -64,13 +69,19 @@ def experiments(
                 ('julia_opt',   read_arrays_julia_opt),
                 ('cpp',         read_arrays_cpp),
             ]:
+            print(f'Running {key}')
             if key in skip:
                 times[key].append(math.nan)
             else:
-                start = time.time()
-                for _ in range(0, tries):
-                    arrays = read_fun(filename)
-                times[key].append((time.time() - start) / tries)
+                try:
+                    start = time.time()
+                    for _ in range(0, tries):
+                        arrays = read_fun(filename)
+                    times[key].append((time.time() - start) / tries)
+                    if len(arrays[0]) == 0: # Actually failed
+                        times[key][-1] = math.nan
+                except:
+                    times[key].append(math.nan)
 
         # External load
         start = time.time()
@@ -80,10 +91,6 @@ def experiments(
 
         elements.append(df.shape[0])
         rows.append(sum(1 for _ in open(filename)))
-
-        # Slow part
-        if tries > 1 and times['load_external'][-1] > 0.1:
-            tries = 1
 
         for k in times.keys() - ['load_external']:
             if skip_after > 0 and times[k][-1] > skip_after:
@@ -97,9 +104,9 @@ def experiments(
         print(f'progress = {perc}%, file {filename}')
         print('  ' + ' '.join([f'{k}:{round(v[-1], 4)}' for k, v in times.items()]))
 
-    df = pd.DataFrame({
-        'elements': elements,
-        'rows': rows,
-        **times,
-    })
-    df.to_csv('out/experiments.csv', index=False)
+        df = pd.DataFrame({
+            'elements': elements,
+            'rows': rows,
+            **times,
+        })
+        df.to_csv('out/experiments.csv', index=False)
