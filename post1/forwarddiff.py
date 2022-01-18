@@ -28,8 +28,11 @@ def taylor(x, a):
         Main.g3(a) * (x - a)**3 / 6
 
 plt.figure(figsize=(10,6))
-plt.plot(domain, image)
-plt.scatter([a], [Main.g(a)], color='red')
-plt.plot(domain, taylor(domain, a), color='red')
+plt.plot(domain, image, label='f(x)')
+plt.scatter([a], [Main.g(a)], color='red', label='a')
+plt.plot(domain, taylor(domain, a), color='red', label='3rd order Taylor poly around a')
 plt.ylim(image.min() - 1, image.max() + 1)
+plt.legend()
+plt.xlabel('x')
+plt.ylabel('y')
 plt.savefig('taylor.png')
