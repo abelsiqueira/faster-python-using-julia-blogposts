@@ -69,5 +69,5 @@ RUN apt-get purge -y gcc git make cmake wget unzip \
 ENTRYPOINT ["python", "-u", "/app/src/main.py"]
 CMD ["--max-num-files", "0", "--skip-after", "0"]
 
-# build: docker build --tag abelsiqueira/faster-python-with-julia-post3 .
-# run: docker run --rm --volume "$PWD/gen-data:/app/gen-data" --volume "$PWD/out:/app/out" abelsiqueira/faster-python-with-julia-post3
+# build: docker build --tag abelsiqueira/faster-python-with-julia-blogpost:post3 .
+# run: docker run --rm --volume "$PWD/dataset:/app/dataset" --volume "$PWD/out:/app/out" abelsiqueira/faster-python-with-julia-blogpost:post3
