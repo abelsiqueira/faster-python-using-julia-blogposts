@@ -6,8 +6,8 @@ This material is part of a series of blog posts about using Julia from Python (S
 The idea was initially presented internally at the Netherlands eScience Center(See the [slides](slides)).
 
 Post links:
-- Soon
-- Soon
+- https://blog.esciencecenter.nl/how-to-call-julia-code-from-python-8589a56a98f2
+- https://blog.esciencecenter.nl/speed-up-your-python-code-using-julia-f97a6c155630
 - Soon
 
 ## Summary
